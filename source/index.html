@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nassim Bakkas Portfolio</title>
+<meta name="description" content="Nassim Bakkas, computer engineering student in cybersecurity at ENSET Mohammedia. Missions, quest log and inventory.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+
+<div id="boot" aria-hidden="true"><pre id="bootlog"></pre><div id="granted">ACCESS GRANTED</div><span class="skip">PRESS ANY KEY TO SKIP</span></div>
+
+<header class="hud">
+  <div class="hud-in">
+    <span class="p1">P1 <b>NASSIM BAKKAS</b></span>
+    <span class="lvl">LVL 02 <i>ENSET MOHAMMEDIA</i></span>
+    <span class="status"><i class="dot"></i>OPEN TO INTERNSHIP · SUMMER 2027</span>
+    <nav aria-label="Sections"><a href="#missions">MISSIONS</a><a href="#quests">QUEST LOG</a><a href="#inventory">INVENTORY</a><a href="#contact">CONTACT</a></nav>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <canvas id="rain" aria-hidden="true"></canvas>
+  <div class="wrap hero-in">
+    <div class="avatar-box">
+      <canvas id="avatar" aria-hidden="true"></canvas>
+      <span class="tag">CLASS: SECURITY ENGINEER</span>
+    </div>
+    <div>
+      <p class="label">PLAYER PROFILE</p>
+      <h1 class="glitch" data-text="NASSIM BAKKAS">NASSIM BAKKAS</h1>
+      <div class="term" id="term">
+        <div class="bar"><i></i><i></i><i></i><span>visitor@nassim-bakkas: ~</span></div>
+        <div class="lines">
+          <div class="tl cmd">$ whoami --full</div>
+          <div class="tl">class ........ Computer engineering student, year 2 of 3</div>
+          <div class="tl">spec ......... Cybersecurity and digital trust</div>
+          <div class="tl">base ......... ENSET Mohammedia, Morocco</div>
+          <div class="tl">objective .... Summer 2027 internship, software or security</div>
+          <div class="tl cmd">$ cat motto.txt</div>
+          <div class="tl hot">I go back and test my own work.<span class="cursor"></span></div>
+        </div>
+      </div>
+      <div class="cta"><a class="btn go" href="#missions">▶ START MISSIONS</a><a class="btn" href="https://github.com/nassim-bakkas">GITHUB</a><a class="btn" href="#contact">CONTACT</a></div>
+    </div>
+  </div>
+</section>
+
+<section id="missions">
+  <div class="wrap">
+    <p class="label">STAGE 1</p>
+    <h2 data-decrypt>SELECT MISSION</h2>
+    <div class="grid">
+
+      <article class="mission" style="--c: var(--green)">
+        <header><canvas class="sprite" data-sprite="thermo" aria-hidden="true"></canvas><div><span class="no">MISSION 01</span><h3 data-decrypt>HVAC ENERGY STUDY</h3></div><span class="state ok">CLEARED</span></header>
+        <p>Forecasts indoor temperature with an LSTM network to find the least energy a heating and cooling system needs. I re-tested my own 2023 result on far more data and retracted its 7% claim.</p>
+        <ul class="loot"><li><b>6,792 h</b>of data</li><li><b>0.404 °C</b>forecast error</li><li><b>1</b>claim retracted</li></ul>
+        <footer><span class="tech">Python · TensorFlow · scikit-learn · pandas</span><a href="https://github.com/nassim-bakkas/hvac-lstm-pid">▶ OPEN REPO</a></footer>
+      </article>
+
+      <article class="mission" style="--c: var(--yellow)">
+        <header><canvas class="sprite" data-sprite="servers" aria-hidden="true"></canvas><div><span class="no">MISSION 02</span><h3 data-decrypt>VMSWARM</h3></div><span class="state ok">CLEARED</span></header>
+        <p>A Bash and C tool that runs a whole fleet of KVM virtual machines at once. I reviewed my own course project for security holes, such as user input reaching <code>eval</code>, and fixed each one with a test.</p>
+        <ul class="loot"><li><b>61</b>automated tests</li><li><b>49</b>fail on version 1</li><li><b>4</b>run modes, benchmarked</li></ul>
+        <footer><span class="tech">Bash · C · libvirt / KVM · Make</span><span>REPO ON REQUEST</span></footer>
+      </article>
+
+      <article class="mission" style="--c: var(--cyan)">
+        <header><canvas class="sprite" data-sprite="shield" aria-hidden="true"></canvas><div><span class="no">MISSION 03</span><h3 data-decrypt>MODBUS HVAC MONITOR</h3></div><span class="state wip">IN PROGRESS</span></header>
+        <p>Spots dangerous commands on a building's control network. A write that sets a room to 45 °C is valid Modbus, so the rules come from knowing the building. Defensive only, on a local simulator.</p>
+        <ul class="loot"><li><b>PROXY</b>reads every request</li><li><b>RULES</b>from the building</li><li><b>TESTS</b>included</li></ul>
+        <footer><span class="tech">Python · Modbus TCP · intrusion detection</span><span>REPO ON REQUEST</span></footer>
+      </article>
+
+      <article class="mission" style="--c: var(--magenta)">
+        <header><canvas class="sprite" data-sprite="ship" aria-hidden="true"></canvas><div><span class="no">MISSION 04</span><h3 data-decrypt>SPACE GAME</h3></div><span class="state ok">CLEARED</span></header>
+        <p>A rhythm shooter where enemies and bosses move on the beat of the music. Every shape, and almost all of the music, is generated in code.</p>
+        <div class="shots">
+          <img src="./shots/vault.jpg" alt="A yellow square boss firing at the player's ship" width="600" height="400">
+          <img src="./shots/twin-moons.jpg" alt="A violet planet boss with two spiked moons" width="600" height="400">
+          <img src="./shots/shard-crown.jpg" alt="A white crystal boss among falling shards" width="600" height="400">
+        </div>
+        <ul class="loot"><li><b>33</b>waves</li><li><b>13</b>boss fights</li><li><b>9,500</b>lines of Java</li></ul>
+        <footer><span class="tech">Java 17 · JavaFX 21 · Maven · 2026 expansion built with an AI assistant</span><a href="https://github.com/nassim-bakkas/space-game">▶ FIRST VERSION</a></footer>
+      </article>
+    </div>
+
+    <p class="label side">SIDE QUESTS</p>
+    <div class="grid">
+      <article class="mission small" style="--c: var(--green)">
+        <header><div><h3>FTOUR AL AMAL</h3></div><span class="state ok">CLEARED</span></header>
+        <p>A full-stack platform for an active charity: Stripe donations, volunteer and mission management, an admin dashboard.</p>
+        <footer><span class="tech">Laravel · PHP · MySQL · Stripe</span><a href="https://github.com/nassim-bakkas/ftouralamal">▶ OPEN REPO</a></footer>
+      </article>
+      <article class="mission small" style="--c: var(--cyan)">
+        <header><div><h3>DIGITAL VAULT</h3></div><span class="state ok">CLEARED</span></header>
+        <p>Hides messages inside images with LSB steganography and measures how much the image changed.</p>
+        <footer><span class="tech">Python · Streamlit · NumPy</span><a href="https://github.com/nassim-bakkas/coffre-fort-numerique">▶ OPEN REPO</a></footer>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="quests">
+  <div class="wrap">
+    <p class="label">STAGE 2</p>
+    <h2 data-decrypt>QUEST LOG</h2>
+    <article class="quest">
+      <header><h3>INTERN, COURT REGISTRY</h3><span class="state ok">QUEST COMPLETE</span></header>
+      <p class="where">Administrative Court of First Instance, Agadir · 21 July to 24 August 2026</p>
+      <ul class="checks">
+        <li>Automated a repetitive document workflow with Playwright in Python, because the internal application has no API.</li>
+        <li>Designed a three-step document authenticity checker: SHA-256 hash, normalised-content comparison, word-by-word diff.</li>
+        <li>Built a Linux administration environment on WSL2: permissions, cron, systemd, SSH keys and basic hardening.</li>
+        <li>Deployed an antivirus solution across 31 workstations.</li>
+      </ul>
+    </article>
+
+    <p class="label side">SAVE FILES</p>
+    <div class="saves">
+      <div class="save now"><span class="slot">SLOT 3 · 2025 to 2028 · PLAYING</span><b>Engineering degree, Computer Engineering: Cybersecurity and Digital Trust</b><span>ENSET Mohammedia, Hassan II University. Second year of three.</span></div>
+      <div class="save"><span class="slot">SLOT 2 · 2023 to 2025</span><b>Preparatory classes for engineering schools (CPGE)</b><span>TSI track.</span></div>
+      <div class="save"><span class="slot">SLOT 1 · 2023</span><b>Baccalaureate</b><span>Mechanical Technology Sciences.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="inventory">
+  <div class="wrap">
+    <p class="label">STAGE 3</p>
+    <h2 data-decrypt>INVENTORY</h2>
+    <dl class="inv">
+      <div><dt>LANGUAGES</dt><dd><span>Python</span><span>C</span><span>Java</span><span>PHP</span><span>Bash</span><span>SQL</span></dd></div>
+      <div><dt>SECURITY</dt><dd><span>Code review for injection</span><span>Burp Suite</span><span>Modbus / industrial protocols</span><span>Host hardening</span></dd></div>
+      <div><dt>SYSTEMS</dt><dd><span>Linux</span><span>WSL2</span><span>SSH</span><span>cron</span><span>systemd</span><span>KVM / libvirt</span></dd></div>
+      <div><dt>DATA + ML</dt><dd><span>pandas</span><span>scikit-learn</span><span>TensorFlow</span><span>MySQL</span></dd></div>
+      <div><dt>WEB</dt><dd><span>HTML / CSS</span><span>JavaScript</span><span>Laravel</span><span>Tailwind CSS</span><span>Streamlit</span></dd></div>
+      <div><dt>TOOLS</dt><dd><span>Git / GitHub</span><span>Playwright</span><span>Maven</span><span>Make</span></dd></div>
+      <div><dt>SPOKEN</dt><dd><span>Arabic, native</span><span>English, B1+</span><span>French, B1</span></dd></div>
+    </dl>
+  </div>
+</section>
+
+<section id="bonus">
+  <div class="wrap">
+    <p class="label">BONUS STAGE</p>
+    <h2 data-decrypt>SHOOT A MISSION OPEN</h2>
+    <p class="where">Move with the mouse or the arrow keys. Click or press space to fire.</p>
+    <canvas id="play" tabindex="0" aria-label="A small game: fly the ship and shoot a shape to jump to that mission"></canvas>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <p class="label">FINAL STAGE</p>
+    <h2 data-decrypt>OPEN A CHANNEL</h2>
+    <div class="term">
+      <div class="bar"><i></i><i></i><i></i><span>secure channel</span></div>
+      <div class="lines">
+        <div class="tl cmd">$ contact --list</div>
+        <div class="tl">email ...... <a href="mailto:nassimbakkas996@gmail.com">nassimbakkas996@gmail.com</a></div>
+        <div class="tl">linkedin ... <a href="https://linkedin.com/in/nassim-bakkas">linkedin.com/in/nassim-bakkas</a></div>
+        <div class="tl">github ..... <a href="https://github.com/nassim-bakkas">github.com/nassim-bakkas</a></div>
+        <div class="tl hot">Looking for a summer 2027 internship in software development or cybersecurity, anywhere in Morocco.<span class="cursor"></span></div>
+      </div>
+    </div>
+    <a class="coin" href="mailto:nassimbakkas996@gmail.com">INSERT COIN TO CONTINUE</a>
+  </div>
+</section>
+
+</main>
+
+<footer><div class="wrap">© 2026 NASSIM BAKKAS · MOHAMMEDIA, MOROCCO · <a href="#top" id="again">PLAY AGAIN ▲</a></div></footer>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

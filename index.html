@@ -1,402 +1,184 @@
 <!DOCTYPE html>
-<html lang="en" data-lang="en">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nassim BAKKAS — Portfolio</title>
-  <style>
-    :root {
-      --bg: #f8f7f4;
-      --bg2: #f0ede8;
-      --bg3: #ebebeb;
-      --accent: #2a52a0;
-      --accent2: #1a3a7a;
-      --text: #1a1a1a;
-      --muted: #666666;
-      --border: #dddad4;
-      --card: #f0ede8;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      line-height: 1.6;
-    }
-
-    /* NAV */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1rem 2.5rem;
-      background: rgba(248,247,244,0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo {
-      font-weight: 700; font-size: 1.1rem; color: var(--accent);
-      letter-spacing: 0.02em;
-    }
-    .nav-links { display: flex; gap: 2rem; align-items: center; }
-    .nav-links a {
-      color: var(--muted); text-decoration: none; font-size: 0.9rem;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--text); }
-    .lang-btn {
-      background: var(--bg3); border: 1px solid var(--border);
-      color: var(--muted); padding: 0.3rem 0.8rem; border-radius: 20px;
-      font-size: 0.8rem; cursor: pointer; transition: all 0.2s;
-    }
-    .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* SECTIONS */
-    section { padding: 6rem 2.5rem; max-width: 1000px; margin: 0 auto; }
-
-    /* HERO */
-    #hero {
-      min-height: 100vh; display: flex; flex-direction: column;
-      justify-content: center; padding-top: 5rem;
-      max-width: 1000px; margin: 0 auto;
-    }
-    .hero-tag {
-      display: inline-block; background: rgba(42,82,160,0.08);
-      border: 1px solid rgba(42,82,160,0.2); color: var(--accent);
-      padding: 0.3rem 0.9rem; border-radius: 20px; font-size: 0.8rem;
-      margin-bottom: 1.5rem; letter-spacing: 0.05em;
-    }
-    h1 {
-      font-size: clamp(2.2rem, 5vw, 3.5rem);
-      font-weight: 800; line-height: 1.15;
-      margin-bottom: 1.2rem;
-    }
-    h1 span { color: var(--accent); }
-    .hero-sub {
-      color: var(--muted); font-size: 1.1rem; max-width: 520px;
-      margin-bottom: 2.5rem; line-height: 1.7;
-    }
-    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .btn {
-      padding: 0.75rem 1.8rem; border-radius: 8px;
-      font-size: 0.9rem; font-weight: 600; cursor: pointer;
-      text-decoration: none; transition: all 0.2s; display: inline-block;
-    }
-    .btn-primary {
-      background: var(--accent); color: #fff; border: none;
-    }
-    .btn-primary:hover { background: #1a3a7a; transform: translateY(-1px); }
-    .btn-outline {
-      background: transparent; color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* SECTION TITLES */
-    .section-label {
-      color: var(--accent); font-size: 0.78rem; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem;
-    }
-    h2 {
-      font-size: 1.9rem; font-weight: 800; margin-bottom: 0.8rem;
-    }
-    .section-desc { color: var(--muted); max-width: 480px; margin-bottom: 3rem; font-size: 0.95rem; }
-
-    /* ABOUT */
-    .about-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
-      align-items: start;
-    }
-    .about-text p { color: var(--muted); line-height: 1.8; margin-bottom: 1rem; font-size: 0.95rem; }
-    .about-info { display: flex; flex-direction: column; gap: 1.2rem; }
-    .info-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 10px; padding: 1.2rem 1.5rem;
-    }
-    .info-card .label { color: var(--accent); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.3rem; }
-    .info-card .value { color: var(--text); font-size: 0.92rem; }
-
-    /* SKILLS */
-    .skills-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 1rem;
-    }
-    .skill-chip {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 8px; padding: 0.9rem 1rem;
-      text-align: center; transition: all 0.2s; cursor: default;
-    }
-    .skill-chip:hover { border-color: var(--accent); transform: translateY(-2px); }
-    .skill-chip .sk-name { font-size: 0.85rem; color: var(--muted); font-weight: 500; }
-
-    /* PROJECTS */
-    .projects-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
-    .project-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 12px; padding: 1.6rem;
-      transition: all 0.25s; display: flex; flex-direction: column;
-    }
-    .project-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(42,82,160,0.08); }
-    .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.8rem; }
-    .project-links { display: flex; gap: 0.5rem; }
-    .project-link {
-      color: var(--muted); text-decoration: none; font-size: 0.78rem;
-      border: 1px solid var(--border); border-radius: 6px;
-      padding: 0.25rem 0.6rem; transition: all 0.2s;
-    }
-    .project-link:hover { color: var(--accent); border-color: var(--accent); }
-    .project-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .project-desc { color: var(--muted); font-size: 0.85rem; line-height: 1.6; flex: 1; margin-bottom: 1rem; }
-    .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-    .tag {
-      background: rgba(42,82,160,0.08); color: var(--accent);
-      font-size: 0.72rem; padding: 0.2rem 0.55rem; border-radius: 4px;
-    }
-
-    /* CONTACT */
-    .contact-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem; margin-bottom: 2.5rem;
-    }
-    .contact-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 10px; padding: 1.4rem;
-      text-decoration: none; transition: all 0.2s; display: block;
-    }
-    .contact-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-    .contact-label { color: var(--accent); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.2rem; }
-    .contact-value { color: var(--muted); font-size: 0.82rem; word-break: break-all; }
-
-    /* FOOTER */
-    footer {
-      border-top: 1px solid var(--border); padding: 2rem 2.5rem;
-      text-align: center; color: var(--muted); font-size: 0.8rem;
-    }
-
-    /* DIVIDER */
-    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
-
-    /* RESPONSIVE */
-    @media (max-width: 700px) {
-      nav { padding: 1rem 1.2rem; }
-      .nav-links { gap: 1rem; }
-      .nav-links a:not(:last-child) { display: none; }
-      section { padding: 4rem 1.2rem; }
-      #hero { padding: 5rem 1.2rem 3rem; }
-      .about-grid { grid-template-columns: 1fr; }
-    }
-
-    /* SCROLL FADE */
-    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
-    .fade-in.visible { opacity: 1; transform: none; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nassim Bakkas Portfolio</title>
+<meta name="description" content="Nassim Bakkas, computer engineering student in cybersecurity at ENSET Mohammedia. Missions, quest log and inventory.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="./assets/app.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index.css">
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <span class="nav-logo">NB.</span>
-  <div class="nav-links">
-    <a href="#about" data-en="About" data-fr="À propos">About</a>
-    <a href="#skills" data-en="Skills" data-fr="Compétences">Skills</a>
-    <a href="#projects" data-en="Projects" data-fr="Projets">Projects</a>
-    <a href="#contact" data-en="Contact" data-fr="Contact">Contact</a>
-    <button class="lang-btn" onclick="toggleLang()">FR</button>
+<div id="boot" aria-hidden="true"><pre id="bootlog"></pre><div id="granted">ACCESS GRANTED</div><span class="skip">PRESS ANY KEY TO SKIP</span></div>
+
+<header class="hud">
+  <div class="hud-in">
+    <span class="p1">P1 <b>NASSIM BAKKAS</b></span>
+    <span class="lvl">LVL 02 <i>ENSET MOHAMMEDIA</i></span>
+    <span class="status"><i class="dot"></i>OPEN TO INTERNSHIP · SUMMER 2027</span>
+    <nav aria-label="Sections"><a href="#missions">MISSIONS</a><a href="#quests">QUEST LOG</a><a href="#inventory">INVENTORY</a><a href="#contact">CONTACT</a></nav>
   </div>
-</nav>
+</header>
 
-<!-- HERO -->
-<div style="padding: 0 2.5rem;">
-<section id="hero">
-  <span class="hero-tag" data-en="Engineering Student · ENSET Mohammedia" data-fr="Étudiant Ingénieur · ENSET Mohammedia">Engineering Student · ENSET Mohammedia</span>
-  <h1>
-    <span data-en="Hi, I'm" data-fr="Bonjour, je suis">Hi, I'm</span><br/>
-    <span>Nassim BAKKAS</span>
-  </h1>
-  <p class="hero-sub" data-en="Cybersecurity & Digital Trust engineering student, passionate about building web applications, security tools, and exploring the intersection of software and systems." data-fr="Étudiant en Ingénierie Informatique, Cybersécurité et Confiance Numérique, passionné par le développement web, les outils de sécurité et l'exploration des systèmes informatiques.">
-    Cybersecurity & Digital Trust engineering student, passionate about building web applications, security tools, and exploring the intersection of software and systems.
-  </p>
-  <div class="hero-cta">
-    <a href="#projects" class="btn btn-primary" data-en="View Projects" data-fr="Voir les projets">View Projects</a>
-    <a href="#contact" class="btn btn-outline" data-en="Get in Touch" data-fr="Me contacter">Get in Touch</a>
-  </div>
-</section>
-</div>
+<main>
 
-<hr class="divider"/>
-
-<!-- ABOUT -->
-<section id="about" class="fade-in">
-  <p class="section-label" data-en="About" data-fr="À propos">About</p>
-  <h2 data-en="Who I am" data-fr="Qui je suis">Who I am</h2>
-  <div class="about-grid">
-    <div class="about-text">
-      <p data-en="I'm a first-year engineering student at ENSET Mohammedia, specializing in Computer Science, Cybersecurity and Digital Trust (IICCN). Before that, I completed two years of CPGE TSI (intensive prep in tech & engineering sciences) after a Baccalaureate in Mechanical Technology Sciences." data-fr="Je suis étudiant en première année du cycle ingénieur à l'ENSET Mohammedia, en filière Ingénierie Informatique, Cybersécurité et Confiance Numérique (IICCN). Auparavant, j'ai effectué deux ans de CPGE TSI après un baccalauréat en Sciences de Technologie Mécanique.">
-        I'm a first-year engineering student at ENSET Mohammedia, specializing in Computer Science, Cybersecurity and Digital Trust (IICCN). Before that, I completed two years of CPGE TSI (intensive prep in tech & engineering sciences) after a Baccalaureate in Mechanical Technology Sciences.
-      </p>
-      <p data-en="I enjoy building things — from Laravel web platforms and steganography tools to Java games. I'm actively looking for internship opportunities where I can contribute and grow." data-fr="J'aime construire des choses — des plateformes web Laravel aux outils de stéganographie, en passant par les jeux Java. Je suis activement à la recherche d'un stage où je pourrai contribuer et évoluer.">
-        I enjoy building things — from Laravel web platforms and steganography tools to Java games. I'm actively looking for internship opportunities where I can contribute and grow.
-      </p>
+<section class="hero">
+  <canvas id="rain" aria-hidden="true"></canvas>
+  <div class="wrap hero-in">
+    <div class="avatar-box">
+      <canvas id="avatar" aria-hidden="true"></canvas>
+      <span class="tag">CLASS: SECURITY ENGINEER</span>
     </div>
-    <div class="about-info">
-      <div class="info-card">
-        <div class="label" data-en="School" data-fr="École">School</div>
-        <div class="value">ENSET Mohammedia — IICCN</div>
-      </div>
-      <div class="info-card">
-        <div class="label" data-en="Graduation" data-fr="Diplôme prévu">Graduation</div>
-        <div class="value">2028</div>
-      </div>
-      <div class="info-card">
-        <div class="label" data-en="Location" data-fr="Localisation">Location</div>
-        <div class="value">Mohammadia, Morocco</div>
-      </div>
-      <div class="info-card">
-        <div class="label" data-en="Languages" data-fr="Langues">Languages</div>
-        <div class="value">Arabic (native) · French B1 · English B1</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="divider"/>
-
-<!-- SKILLS -->
-<section id="skills" class="fade-in">
-  <p class="section-label" data-en="Skills" data-fr="Compétences">Skills</p>
-  <h2 data-en="Tech Stack" data-fr="Technologies">Tech Stack</h2>
-  <p class="section-desc" data-en="Languages, frameworks and tools I work with." data-fr="Langages, frameworks et outils que j'utilise.">Languages, frameworks and tools I work with.</p>
-  <div class="skills-grid">
-    <div class="skill-chip"><div class="sk-name">Python</div></div>
-    <div class="skill-chip"><div class="sk-name">Java</div></div>
-    <div class="skill-chip"><div class="sk-name">C</div></div>
-    <div class="skill-chip"><div class="sk-name">HTML / CSS</div></div>
-    <div class="skill-chip"><div class="sk-name">JavaScript</div></div>
-    <div class="skill-chip"><div class="sk-name">PHP</div></div>
-    <div class="skill-chip"><div class="sk-name">Laravel</div></div>
-    <div class="skill-chip"><div class="sk-name">MySQL / SQL</div></div>
-    <div class="skill-chip"><div class="sk-name">Bash</div></div>
-    <div class="skill-chip"><div class="sk-name">Git / GitHub</div></div>
-    <div class="skill-chip"><div class="sk-name">Linux</div></div>
-    <div class="skill-chip"><div class="sk-name">Cybersecurity</div></div>
-  </div>
-</section>
-
-<hr class="divider"/>
-
-<!-- PROJECTS -->
-<section id="projects" class="fade-in">
-  <p class="section-label" data-en="Projects" data-fr="Projets">Projects</p>
-  <h2 data-en="What I've Built" data-fr="Ce que j'ai construit">What I've Built</h2>
-  <p class="section-desc" data-en="A selection of personal and academic projects." data-fr="Une sélection de projets personnels et académiques.">A selection of personal and academic projects.</p>
-  <div class="projects-grid">
-
-    <div class="project-card">
-      <div class="project-header">
-        <div class="project-links">
-          <a class="project-link" href="https://github.com/nassim-bakkas/ftouralamal" target="_blank">GitHub →</a>
+    <div>
+      <p class="label">PLAYER PROFILE</p>
+      <h1 class="glitch" data-text="NASSIM BAKKAS">NASSIM BAKKAS</h1>
+      <div class="term" id="term">
+        <div class="bar"><i></i><i></i><i></i><span>visitor@nassim-bakkas: ~</span></div>
+        <div class="lines">
+          <div class="tl cmd">$ whoami --full</div>
+          <div class="tl">class ........ Computer engineering student, year 2 of 3</div>
+          <div class="tl">spec ......... Cybersecurity and digital trust</div>
+          <div class="tl">base ......... ENSET Mohammedia, Morocco</div>
+          <div class="tl">objective .... Summer 2027 internship, software or security</div>
+          <div class="tl cmd">$ cat motto.txt</div>
+          <div class="tl hot">I go back and test my own work.<span class="cursor"></span></div>
         </div>
       </div>
-      <div class="project-title">Ftour Al Amal</div>
-      <div class="project-desc" data-en="Full-stack web platform for a Ramadan charity association — online donations via Stripe, volunteer management, humanitarian missions, and an admin dashboard with real-time statistics." data-fr="Plateforme web complète pour une association caritative — dons en ligne via Stripe, gestion des bénévoles, missions humanitaires et tableau de bord administratif avec statistiques en temps réel.">
-        Full-stack web platform for a Ramadan charity association — online donations via Stripe, volunteer management, humanitarian missions, and an admin dashboard with real-time statistics.
-      </div>
-      <div class="project-tags">
-        <span class="tag">Laravel</span>
-        <span class="tag">Tailwind CSS</span>
-        <span class="tag">MySQL</span>
-        <span class="tag">Stripe</span>
-        <span class="tag">PHP</span>
-      </div>
+      <div class="cta"><a class="btn go" href="#missions">▶ START MISSIONS</a><a class="btn" href="https://github.com/nassim-bakkas">GITHUB</a><a class="btn" href="#contact">CONTACT</a></div>
     </div>
-
-    <div class="project-card">
-      <div class="project-header">
-        <div class="project-links">
-          <a class="project-link" href="https://github.com/nassim-bakkas/coffre-fort-numerique" target="_blank">GitHub →</a>
-        </div>
-      </div>
-      <div class="project-title">Coffre-fort Numérique</div>
-      <div class="project-desc" data-en="Web app for hiding and encrypting secret messages inside images using LSB steganography and cryptography. Includes image quality analysis metrics (PSNR, MSE)." data-fr="Application web pour dissimuler et chiffrer des messages secrets dans des images via la stéganographie LSB et la cryptographie. Inclut des métriques de qualité d'image (PSNR, MSE).">
-        Web app for hiding and encrypting secret messages inside images using LSB steganography and cryptography. Includes image quality analysis metrics (PSNR, MSE).
-      </div>
-      <div class="project-tags">
-        <span class="tag">Python</span>
-        <span class="tag">Streamlit</span>
-        <span class="tag">Steganography</span>
-        <span class="tag">Cryptography</span>
-      </div>
-    </div>
-
-    <div class="project-card">
-      <div class="project-header">
-        <div class="project-links">
-          <a class="project-link" href="https://github.com/nassim-bakkas/space-game" target="_blank">GitHub →</a>
-        </div>
-      </div>
-      <div class="project-title">Space Game</div>
-      <div class="project-desc" data-en="2D space shooter game built with Java 17 and JavaFX 21. Features enemy waves, power-ups, bombs, explosions and an animated star field background." data-fr="Jeu de tir spatial 2D développé avec Java 17 et JavaFX 21. Vagues d'ennemis, power-ups, bombes, explosions et arrière-plan étoilé animé.">
-        2D space shooter game built with Java 17 and JavaFX 21. Features enemy waves, power-ups, bombs, explosions and an animated star field background.
-      </div>
-      <div class="project-tags">
-        <span class="tag">Java</span>
-        <span class="tag">JavaFX</span>
-        <span class="tag">Maven</span>
-      </div>
-    </div>
-
   </div>
 </section>
 
-<hr class="divider"/>
+<section id="missions">
+  <div class="wrap">
+    <p class="label">STAGE 1</p>
+    <h2 data-decrypt>SELECT MISSION</h2>
+    <div class="grid">
 
-<!-- CONTACT -->
-<section id="contact" class="fade-in">
-  <p class="section-label" data-en="Contact" data-fr="Contact">Contact</p>
-  <h2 data-en="Get in Touch" data-fr="Me contacter">Get in Touch</h2>
-  <p class="section-desc" data-en="I'm open to internships, collaborations, and interesting projects." data-fr="Je suis ouvert aux stages, collaborations et projets intéressants.">I'm open to internships, collaborations, and interesting projects.</p>
-  <div class="contact-grid">
-    <a class="contact-card" href="mailto:nassimbakkas996@gmail.com">
-      <div class="contact-label">Email</div>
-      <div class="contact-value">nassimbakkas996@gmail.com</div>
-    </a>
-    <a class="contact-card" href="https://linkedin.com/in/nassim-bakkas" target="_blank">
-      <div class="contact-label">LinkedIn</div>
-      <div class="contact-value">nassim-bakkas</div>
-    </a>
-    <a class="contact-card" href="https://github.com/nassim-bakkas" target="_blank">
-      <div class="contact-label">GitHub</div>
-      <div class="contact-value">nassim-bakkas</div>
-    </a>
+      <article class="mission" style="--c: var(--green)">
+        <header><canvas class="sprite" data-sprite="thermo" aria-hidden="true"></canvas><div><span class="no">MISSION 01</span><h3 data-decrypt>HVAC ENERGY STUDY</h3></div><span class="state ok">CLEARED</span></header>
+        <p>Forecasts indoor temperature with an LSTM network to find the least energy a heating and cooling system needs. I re-tested my own 2023 result on far more data and retracted its 7% claim.</p>
+        <ul class="loot"><li><b>6,792 h</b>of data</li><li><b>0.404 °C</b>forecast error</li><li><b>1</b>claim retracted</li></ul>
+        <footer><span class="tech">Python · TensorFlow · scikit-learn · pandas</span><a href="https://github.com/nassim-bakkas/hvac-lstm-pid">▶ OPEN REPO</a></footer>
+      </article>
+
+      <article class="mission" style="--c: var(--yellow)">
+        <header><canvas class="sprite" data-sprite="servers" aria-hidden="true"></canvas><div><span class="no">MISSION 02</span><h3 data-decrypt>VMSWARM</h3></div><span class="state ok">CLEARED</span></header>
+        <p>A Bash and C tool that runs a whole fleet of KVM virtual machines at once. I reviewed my own course project for security holes, such as user input reaching <code>eval</code>, and fixed each one with a test.</p>
+        <ul class="loot"><li><b>61</b>automated tests</li><li><b>49</b>fail on version 1</li><li><b>4</b>run modes, benchmarked</li></ul>
+        <footer><span class="tech">Bash · C · libvirt / KVM · Make</span><span>REPO ON REQUEST</span></footer>
+      </article>
+
+      <article class="mission" style="--c: var(--cyan)">
+        <header><canvas class="sprite" data-sprite="shield" aria-hidden="true"></canvas><div><span class="no">MISSION 03</span><h3 data-decrypt>MODBUS HVAC MONITOR</h3></div><span class="state wip">IN PROGRESS</span></header>
+        <p>Spots dangerous commands on a building's control network. A write that sets a room to 45 °C is valid Modbus, so the rules come from knowing the building. Defensive only, on a local simulator.</p>
+        <ul class="loot"><li><b>PROXY</b>reads every request</li><li><b>RULES</b>from the building</li><li><b>TESTS</b>included</li></ul>
+        <footer><span class="tech">Python · Modbus TCP · intrusion detection</span><span>REPO ON REQUEST</span></footer>
+      </article>
+
+      <article class="mission" style="--c: var(--magenta)">
+        <header><canvas class="sprite" data-sprite="ship" aria-hidden="true"></canvas><div><span class="no">MISSION 04</span><h3 data-decrypt>SPACE GAME</h3></div><span class="state ok">CLEARED</span></header>
+        <p>A rhythm shooter where enemies and bosses move on the beat of the music. Every shape, and almost all of the music, is generated in code.</p>
+        <div class="shots">
+          <img src="./shots/vault.jpg" alt="A yellow square boss firing at the player's ship" width="600" height="400">
+          <img src="./shots/twin-moons.jpg" alt="A violet planet boss with two spiked moons" width="600" height="400">
+          <img src="./shots/shard-crown.jpg" alt="A white crystal boss among falling shards" width="600" height="400">
+        </div>
+        <ul class="loot"><li><b>33</b>waves</li><li><b>13</b>boss fights</li><li><b>9,500</b>lines of Java</li></ul>
+        <footer><span class="tech">Java 17 · JavaFX 21 · Maven · 2026 expansion built with an AI assistant</span><a href="https://github.com/nassim-bakkas/space-game">▶ FIRST VERSION</a></footer>
+      </article>
+    </div>
+
+    <p class="label side">SIDE QUESTS</p>
+    <div class="grid">
+      <article class="mission small" style="--c: var(--green)">
+        <header><div><h3>FTOUR AL AMAL</h3></div><span class="state ok">CLEARED</span></header>
+        <p>A full-stack platform for an active charity: Stripe donations, volunteer and mission management, an admin dashboard.</p>
+        <footer><span class="tech">Laravel · PHP · MySQL · Stripe</span><a href="https://github.com/nassim-bakkas/ftouralamal">▶ OPEN REPO</a></footer>
+      </article>
+      <article class="mission small" style="--c: var(--cyan)">
+        <header><div><h3>DIGITAL VAULT</h3></div><span class="state ok">CLEARED</span></header>
+        <p>Hides messages inside images with LSB steganography and measures how much the image changed.</p>
+        <footer><span class="tech">Python · Streamlit · NumPy</span><a href="https://github.com/nassim-bakkas/coffre-fort-numerique">▶ OPEN REPO</a></footer>
+      </article>
+    </div>
   </div>
 </section>
 
-<footer>
-  <span data-en="Designed & built by Nassim BAKKAS · 2026" data-fr="Conçu et développé par Nassim BAKKAS · 2026">Designed & built by Nassim BAKKAS · 2026</span>
-</footer>
+<section id="quests">
+  <div class="wrap">
+    <p class="label">STAGE 2</p>
+    <h2 data-decrypt>QUEST LOG</h2>
+    <article class="quest">
+      <header><h3>INTERN, COURT REGISTRY</h3><span class="state ok">QUEST COMPLETE</span></header>
+      <p class="where">Administrative Court of First Instance, Agadir · 21 July to 24 August 2026</p>
+      <ul class="checks">
+        <li>Automated a repetitive document workflow with Playwright in Python, because the internal application has no API.</li>
+        <li>Designed a three-step document authenticity checker: SHA-256 hash, normalised-content comparison, word-by-word diff.</li>
+        <li>Built a Linux administration environment on WSL2: permissions, cron, systemd, SSH keys and basic hardening.</li>
+        <li>Deployed an antivirus solution across 31 workstations.</li>
+      </ul>
+    </article>
 
-<script>
-  // Language toggle
-  let currentLang = 'en';
-  function toggleLang() {
-    currentLang = currentLang === 'en' ? 'fr' : 'en';
-    document.documentElement.setAttribute('data-lang', currentLang);
-    document.querySelector('.lang-btn').textContent = currentLang === 'en' ? 'FR' : 'EN';
-    document.querySelectorAll('[data-en]').forEach(el => {
-      el.textContent = el.getAttribute('data-' + currentLang);
-    });
-  }
+    <p class="label side">SAVE FILES</p>
+    <div class="saves">
+      <div class="save now"><span class="slot">SLOT 3 · 2025 to 2028 · PLAYING</span><b>Engineering degree, Computer Engineering: Cybersecurity and Digital Trust</b><span>ENSET Mohammedia, Hassan II University. Second year of three.</span></div>
+      <div class="save"><span class="slot">SLOT 2 · 2023 to 2025</span><b>Preparatory classes for engineering schools (CPGE)</b><span>TSI track.</span></div>
+      <div class="save"><span class="slot">SLOT 1 · 2023</span><b>Baccalaureate</b><span>Mechanical Technology Sciences.</span></div>
+    </div>
+  </div>
+</section>
 
-  // Scroll fade-in
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-</script>
+<section id="inventory">
+  <div class="wrap">
+    <p class="label">STAGE 3</p>
+    <h2 data-decrypt>INVENTORY</h2>
+    <dl class="inv">
+      <div><dt>LANGUAGES</dt><dd><span>Python</span><span>C</span><span>Java</span><span>PHP</span><span>Bash</span><span>SQL</span></dd></div>
+      <div><dt>SECURITY</dt><dd><span>Code review for injection</span><span>Burp Suite</span><span>Modbus / industrial protocols</span><span>Host hardening</span></dd></div>
+      <div><dt>SYSTEMS</dt><dd><span>Linux</span><span>WSL2</span><span>SSH</span><span>cron</span><span>systemd</span><span>KVM / libvirt</span></dd></div>
+      <div><dt>DATA + ML</dt><dd><span>pandas</span><span>scikit-learn</span><span>TensorFlow</span><span>MySQL</span></dd></div>
+      <div><dt>WEB</dt><dd><span>HTML / CSS</span><span>JavaScript</span><span>Laravel</span><span>Tailwind CSS</span><span>Streamlit</span></dd></div>
+      <div><dt>TOOLS</dt><dd><span>Git / GitHub</span><span>Playwright</span><span>Maven</span><span>Make</span></dd></div>
+      <div><dt>SPOKEN</dt><dd><span>Arabic, native</span><span>English, B1+</span><span>French, B1</span></dd></div>
+    </dl>
+  </div>
+</section>
+
+<section id="bonus">
+  <div class="wrap">
+    <p class="label">BONUS STAGE</p>
+    <h2 data-decrypt>SHOOT A MISSION OPEN</h2>
+    <p class="where">Move with the mouse or the arrow keys. Click or press space to fire.</p>
+    <canvas id="play" tabindex="0" aria-label="A small game: fly the ship and shoot a shape to jump to that mission"></canvas>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <p class="label">FINAL STAGE</p>
+    <h2 data-decrypt>OPEN A CHANNEL</h2>
+    <div class="term">
+      <div class="bar"><i></i><i></i><i></i><span>secure channel</span></div>
+      <div class="lines">
+        <div class="tl cmd">$ contact --list</div>
+        <div class="tl">email ...... <a href="mailto:nassimbakkas996@gmail.com">nassimbakkas996@gmail.com</a></div>
+        <div class="tl">linkedin ... <a href="https://linkedin.com/in/nassim-bakkas">linkedin.com/in/nassim-bakkas</a></div>
+        <div class="tl">github ..... <a href="https://github.com/nassim-bakkas">github.com/nassim-bakkas</a></div>
+        <div class="tl hot">Looking for a summer 2027 internship in software development or cybersecurity, anywhere in Morocco.<span class="cursor"></span></div>
+      </div>
+    </div>
+    <a class="coin" href="mailto:nassimbakkas996@gmail.com">INSERT COIN TO CONTINUE</a>
+  </div>
+</section>
+
+</main>
+
+<footer><div class="wrap">© 2026 NASSIM BAKKAS · MOHAMMEDIA, MOROCCO · <a href="#top" id="again">PLAY AGAIN ▲</a></div></footer>
+
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
