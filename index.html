@@ -13,7 +13,19 @@
 </head>
 <body>
 
-<div id="boot" aria-hidden="true"><pre id="bootlog"></pre><div id="granted">ACCESS GRANTED</div><span class="skip">PRESS ANY KEY TO SKIP</span></div>
+<div id="gate" role="dialog" aria-modal="true" aria-label="Entrance terminal" hidden>
+  <div class="gate-term">
+    <div class="bar"><i></i><i></i><i></i><span>nassim-bakkas · login</span></div>
+    <div class="glines" id="glines" aria-live="polite"></div>
+    <form class="prompt" id="gform" autocomplete="off">
+      <label for="gcmd">visitor@nassim-bakkas:~$</label>
+      <input id="gcmd" type="text" spellcheck="false" autocapitalize="off" enterkeyhint="go" placeholder="type ls">
+    </form>
+  </div>
+  <div id="granted">ACCESS GRANTED</div>
+  <button type="button" class="gate-skip" id="gskip">SKIP TO PORTFOLIO ▶</button>
+</div>
+<div id="arcade" hidden><canvas aria-label="Space Game demo"></canvas><button type="button" class="arcade-close">ESC ✕</button></div>
 
 <header class="hud">
   <div class="hud-in">

@@ -84,26 +84,94 @@ if (!still) {
   if (still) { for (let i = 0; i < 30; i++) frame(); } else setInterval(frame, 70);
 })(document.getElementById('rain'));
 
-// ── Boot: connect, verify, ACCESS GRANTED ────────────────────────────────────
-async function boot() {
-  const box = document.getElementById('boot'), log = document.getElementById('bootlog');
-  let skipped = false, seen = false;
-  try { seen = sessionStorage.getItem('booted') === '1'; sessionStorage.setItem('booted', '1'); } catch (e) { /* storage may be blocked */ }
-  if (still || seen) return;
-  const skip = () => { skipped = true; };
-  window.addEventListener('keydown', skip, { once: true });
-  box.addEventListener('pointerdown', skip, { once: true });
-  document.body.classList.add('booting');
-  const lines = ['> ssh visitor@nassim-bakkas', '> handshake .............. OK', '> verifying visitor ...... OK', '> loading profile [##########] 100%'];
-  for (const line of lines) {
-    for (const ch of line) { if (skipped) break; log.textContent += ch; await sleep(ch === '.' || ch === '#' ? 22 : 12); }
-    log.textContent += '\n';
-    if (!skipped) await sleep(140);
-  }
-  if (!skipped) { box.classList.add('done'); await sleep(850); }
-  document.body.classList.remove('booting');
+// ── The entrance: a terminal. ls to look around, cd portfolio to come in ─────
+function gate() {
+  return new Promise(resolve => {
+    const box = document.getElementById('gate'), out = document.getElementById('glines'), form = document.getElementById('gform'), input = document.getElementById('gcmd');
+    let skip = false;
+    try { skip = sessionStorage.getItem('entered') === '1'; } catch (e) { /* storage may be blocked */ }
+    if (location.hash.length > 1) skip = true;                       // a link straight to a section goes straight there
+    if (skip) { resolve(); return; }
+    box.hidden = false; document.body.classList.add('gated');
+    const print = (html, cls) => { const d = document.createElement('div'); d.className = 'tl' + (cls ? ' ' + cls : ''); d.innerHTML = html; out.appendChild(d); out.scrollTop = out.scrollHeight; return d; };
+    const file = (name, cls, cmd) => `<button type="button" class="f ${cls}" data-run="${cmd}">${name}</button>`;
+    let done = false, busy = false;
+    async function enter() {
+      if (done) return; done = true;
+      try { sessionStorage.setItem('entered', '1'); } catch (e) { /* storage may be blocked */ }
+      const line = print('decrypting portfolio [          ] 0%', 'ok');
+      for (let i = 1; i <= 10; i++) { await sleep(still ? 0 : 45); line.textContent = `decrypting portfolio [${'#'.repeat(i)}${' '.repeat(10 - i)}] ${i * 10}%`; }
+      box.classList.add('done');
+      await sleep(still ? 0 : 750);
+      box.hidden = true; box.classList.remove('done'); document.body.classList.remove('gated');
+      resolve();
+    }
+    async function game() {
+      print('launching space-game...', 'ok');
+      await sleep(still ? 0 : 300);
+      const { startArcade } = await import('./game.js');
+      startArcade({ onExit: () => { print('space-game exited. type <span class="k">ls</span> or <span class="k">cd portfolio</span>.'); input.focus(); } });
+    }
+    const COMMANDS = {
+      help: () => ['commands:', '  ls              list what is here', '  cd portfolio    enter the portfolio', '  ./space-game    play the game demo', '  cat README.txt  read me', '  whoami · clear · skip'].forEach(l => print(l.replace(/ /g, '&nbsp;'))),
+      ls: () => {
+        print(`drwxr-xr-x&nbsp;&nbsp;${file('portfolio/', 'dir', 'cd portfolio')}&nbsp;&nbsp;&nbsp;<span class="muted">missions, quest log, skills</span>`);
+        print(`-rwxr-xr-x&nbsp;&nbsp;${file('space-game', 'exe', './space-game')}&nbsp;&nbsp;&nbsp;<span class="muted">playable demo of my game</span>`);
+        print(`-rw-r--r--&nbsp;&nbsp;${file('README.txt', '', 'cat README.txt')}&nbsp;&nbsp;&nbsp;<span class="muted">read me first</span>`);
+        print('<span class="muted">enter with</span> <span class="k">cd portfolio</span><span class="muted">, play with</span> <span class="k">./space-game</span>');
+      },
+      cd: arg => {
+        const a = (arg || '').replace(/\/$/, '');
+        if (a === 'portfolio') return enter();
+        if (a === 'space-game') { print('cd: space-game: not a directory. running it instead.', 'err'); return game(); }
+        if (!a || a === '~') return print('');
+        print(`cd: ${a.replace(/[<>&]/g, '')}: no such directory. try ls`, 'err');
+      },
+      cat: arg => {
+        if ((arg || '').toLowerCase() !== 'readme.txt') return print(`cat: ${(arg || '').replace(/[<>&]/g, '')}: no such file`, 'err');
+        ['Hi, I am Nassim Bakkas, a computer engineering student in cybersecurity', 'at ENSET Mohammedia, Morocco, looking for a summer 2027 internship.', '', 'portfolio/ has my projects, my internship and my skills.', 'space-game is a small web version of a game I built in Java.'].forEach(l => print(l || '&nbsp;'));
+      },
+      whoami: () => print('visitor (clearance: guest). the owner is nassim bakkas.'),
+      clear: () => { out.innerHTML = ''; },
+      sudo: () => print('visitor is not in the sudoers file. This incident will be reported.', 'err'),
+      skip: () => enter(), exit: () => enter(), portfolio: () => enter(),
+      './portfolio': () => print('portfolio is a directory. try cd portfolio', 'err'),
+      './space-game': () => game(), 'space-game': () => game(), play: () => game(), open: arg => COMMANDS.cd(arg)
+    };
+    function run(raw) {
+      if (done || busy) return;
+      const line = raw.trim();
+      print('$ ' + line.replace(/[<>&]/g, ''), 'cmd');
+      if (!line) return print('type <span class="k">ls</span> to look around.');
+      const [name, ...rest] = line.split(/\s+/), fn = COMMANDS[name.toLowerCase()];
+      if (fn) fn(rest.join(' ')); else print(`command not found: ${name.replace(/[<>&]/g, '')}. try <span class="k">ls</span> or <span class="k">help</span>`, 'err');
+    }
+    form.addEventListener('submit', e => { e.preventDefault(); run(input.value); input.value = ''; });
+    input.addEventListener('keydown', e => {
+      if (e.key !== 'Tab' || !input.value) return;
+      const v = input.value, opts = ['cd portfolio', './space-game', 'cat README.txt', 'ls', 'help', 'clear', 'whoami'].filter(o => o.toLowerCase().startsWith(v.toLowerCase()));
+      e.preventDefault(); if (opts.length === 1) input.value = opts[0];
+    });
+    out.addEventListener('click', e => { const b = e.target.closest('button[data-run]'); if (b) run(b.dataset.run); });
+    box.addEventListener('click', e => { if (!e.target.closest('button, a') && !getSelection().toString()) input.focus({ preventScroll: true }); });
+    document.getElementById('gskip').addEventListener('click', () => { run('cd portfolio'); });
+    // The welcome, typed.
+    (async () => {
+      busy = true;
+      const lines = [`Last login: ${new Date().toDateString()} from ${'10.' + Math.floor(Math.random() * 9) + '.' + Math.floor(Math.random() * 250) + '.' + Math.floor(2 + Math.random() * 250)}`,
+        'NASSIM-BAKKAS OS v2.0 · clearance: visitor', '', 'Welcome. Type <span class="k">ls</span> to look around.'];
+      for (const l of lines) {
+        if (still || l.includes('<')) { print(l || '&nbsp;'); continue; }
+        const d = print('');
+        for (let k = 1; k <= l.length; k++) { d.textContent = l.slice(0, k); await sleep(14); }
+        await sleep(120);
+      }
+      busy = false;
+      input.focus({ preventScroll: true });
+    })();
+  });
 }
-boot().then(async () => { if (!still) await typeLines(document.getElementById('term')); shell(document.getElementById('term')); });
+gate().then(async () => { if (!still) await typeLines(document.getElementById('term')); shell(document.getElementById('term')); });
 document.getElementById('again').addEventListener('click', e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: still ? 'auto' : 'smooth' }); });
 
 // ── Bonus stage: fly the ship, shoot a shape, land on that mission ───────────
@@ -205,7 +273,7 @@ function shell(term) {
     help: () => {
       print('available commands:');
       [['whoami', 'who I am'], ['projects', 'list my missions'], ['open &lt;name&gt;', 'jump to a mission, e.g. open hvac'], ['skills', 'my inventory'],
-       ['experience', 'my internship'], ['contact', 'how to reach me'], ['github', 'my GitHub'], ['play', 'the bonus stage'], ['hack', 'try it'], ['clear', 'clear the screen']]
+       ['experience', 'my internship'], ['contact', 'how to reach me'], ['github', 'my GitHub'], ['play', 'the game demo, full screen'], ['logout', 'back to the entrance'], ['hack', 'try it'], ['clear', 'clear the screen']]
         .forEach(([c, d]) => print(`  <span class="k">${c.padEnd(14, ' ').replace(/ /g, '&nbsp;')}</span>${d}`));
       print('tip: Tab completes, ↑ recalls the last command.');
     },
@@ -238,7 +306,8 @@ function shell(term) {
     },
     github: () => print('github .... ' + link('https://github.com/nassim-bakkas', 'github.com/nassim-bakkas')),
     linkedin: () => print('linkedin .. ' + link('https://linkedin.com/in/nassim-bakkas', 'linkedin.com/in/nassim-bakkas')),
-    play: () => { print('loading bonus stage...', 'ok'); setTimeout(() => { jump('bonus'); document.getElementById('play').focus({ preventScroll: true }); }, 350); },
+    play: async () => { print('launching space-game...', 'ok'); const { startArcade } = await import('./game.js'); startArcade({ onExit: () => { print('back in the portfolio.'); input.focus({ preventScroll: true }); } }); },
+    logout: () => { print('logging out...', 'ok'); try { sessionStorage.removeItem('entered'); } catch (e) { /* storage may be blocked */ } setTimeout(() => { history.replaceState(null, '', location.pathname); location.reload(); }, 400); },
     clear: () => { out.innerHTML = ''; },
     date: () => print(new Date().toString()),
     echo: arg => print(esc(arg || '')),
@@ -345,6 +414,7 @@ const stamp = () => new Date().toTimeString().slice(0, 8);
   if (still || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
   const cur = document.getElementById('cursor'), co = document.getElementById('coords');
   document.body.classList.add('aim');
+  cur.style.transform = 'translate(-99px, -99px)';               // out of sight until the mouse moves
   addEventListener('pointermove', e => {
     cur.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
     co.textContent = `X:${String(Math.round(e.pageX)).padStart(4, '0')} Y:${String(Math.round(e.pageY)).padStart(4, '0')}`;
