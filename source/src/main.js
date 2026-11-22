@@ -289,3 +289,163 @@ function shell(term) {
   chips.addEventListener('click', e => { const b = e.target.closest('button[data-cmd]'); if (b && !busy) run(b.dataset.cmd); });
   print('type <span class="k">help</span> to see what this terminal can do.');
 }
+
+// ── Cyber effects ───────────────────────────────────────────────────────────
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const ip = () => `10.${rnd(0, 9)}.${rnd(0, 254)}.${rnd(2, 254)}`;      // private addresses only: nothing real
+const stamp = () => new Date().toTimeString().slice(0, 8);
+
+// The live security log: what the monitor "blocked", on a loop.
+(function ticker(el) {
+  const kinds = [
+    () => `<i>BLOCKED</i> port scan from ${ip()}`,
+    () => `<i>BLOCKED</i> SQL injection on /login from ${ip()}`,
+    () => `<b>OK</b> TLS handshake ${ip()} → 443`,
+    () => `<i>BLOCKED</i> Modbus write: setpoint 45.0 °C out of band`,
+    () => `<b>OK</b> SHA-256 verified: rapport_${rnd(100, 999)}.pdf`,
+    () => `<i>BLOCKED</i> brute force on ssh (${rnd(12, 90)} tries) from ${ip()}`,
+    () => `<b>OK</b> backup complete · ${rnd(2, 9)}.${rnd(0, 9)} GB`,
+    () => `<i>BLOCKED</i> eval() injection in --grep argument`,
+    () => `<b>OK</b> firewall rules reloaded`
+  ];
+  let html = '';
+  for (let i = 0; i < 14; i++) html += `<span>[${stamp()}] ${kinds[i % kinds.length]()}</span>`;
+  el.innerHTML = html + html;                      // twice, for a seamless loop
+})(document.getElementById('ticker'));
+
+// The system monitor under the avatar.
+(function monitor() {
+  const cpu = document.getElementById('cpu'), cpuv = document.getElementById('cpuv'), blocked = document.getElementById('blocked');
+  const net = document.getElementById('net'), ctx = net.getContext('2d');
+  const pts = Array.from({ length: 40 }, () => 0.3 + Math.random() * 0.4);
+  let count = 1337;
+  function draw() {
+    const w = net.width = net.clientWidth, h = net.height = net.clientHeight;
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = 'rgba(61, 255, 139, 0.15)'; ctx.strokeStyle = '#3DFF8B'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(0, h);
+    pts.forEach((v, i) => ctx.lineTo(i / (pts.length - 1) * w, h - v * h));
+    ctx.lineTo(w, h); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); pts.forEach((v, i) => ctx[i ? 'lineTo' : 'moveTo'](i / (pts.length - 1) * w, h - v * h)); ctx.stroke();
+  }
+  function step() {
+    const c = rnd(12, 78);
+    cpu.style.width = c + '%'; cpuv.textContent = c + '%';
+    pts.shift(); pts.push(Math.min(0.95, Math.max(0.08, pts[pts.length - 1] + (Math.random() - 0.5) * 0.35)));
+    if (Math.random() < 0.6) count += rnd(1, 4);
+    blocked.textContent = count.toLocaleString('en');
+    draw();
+  }
+  step();
+  if (!still) setInterval(step, 900);
+})();
+
+// The targeting cursor, with its coordinates.
+(function aim() {
+  if (still || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const cur = document.getElementById('cursor'), co = document.getElementById('coords');
+  document.body.classList.add('aim');
+  addEventListener('pointermove', e => {
+    cur.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    co.textContent = `X:${String(Math.round(e.pageX)).padStart(4, '0')} Y:${String(Math.round(e.pageY)).padStart(4, '0')}`;
+    document.body.classList.toggle('locked', !!e.target.closest('a, button, .mission, input, canvas#play'));
+  }, { passive: true });
+  document.addEventListener('mouseleave', () => { cur.style.transform = 'translate(-99px, -99px)'; });
+})();
+
+// A glitch across the screen when jumping to a section.
+const glitchBox = document.getElementById('glitch');
+function glitchFlash(then) {
+  if (still) { then(); return; }
+  glitchBox.innerHTML = '';
+  const colors = ['#3DFF8B', '#FF3DA6', '#3DE8FF', '#FFD23D'];
+  for (let i = 0; i < 9; i++) {
+    const b = document.createElement('i'), top = rnd(0, 95);
+    b.style.cssText = `top:${top}%;height:${rnd(1, 7)}%;background:${colors[i % 4]};opacity:${0.25 + Math.random() * 0.4};transform:translateX(${rnd(-30, 30)}px)`;
+    glitchBox.appendChild(b);
+  }
+  glitchBox.classList.add('on');
+  document.body.style.transform = `translateX(${rnd(-6, 6)}px)`;
+  setTimeout(() => { document.body.style.transform = ''; then(); }, 90);
+  setTimeout(() => { glitchBox.classList.remove('on'); }, 220);
+}
+document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+  const id = a.getAttribute('href').slice(1), target = document.getElementById(id);
+  if (!target || a.id === 'again') return;
+  e.preventDefault();
+  glitchFlash(() => target.scrollIntoView({ behavior: 'auto' }));
+}));
+
+// Missions: the title scrambles again when the cursor locks on.
+document.querySelectorAll('.mission h3').forEach(h => {
+  const card = h.closest('.mission');
+  let busy = false;
+  card.addEventListener('mouseenter', () => { if (still || busy) return; busy = true; decrypt(h); setTimeout(() => { busy = false; }, 700); });
+});
+
+// The game screenshots decrypt from coarse pixels to sharp.
+function pixelReveal(img) {
+  const box = img.closest('.shots'), cv = document.createElement('canvas'), ctx = cv.getContext('2d');
+  cv.className = 'pix';
+  const place = () => { cv.style.left = img.offsetLeft + 'px'; cv.style.top = img.offsetTop + 'px'; cv.style.width = img.offsetWidth + 'px'; cv.style.height = img.offsetHeight + 'px'; };
+  place(); box.appendChild(cv); img.style.visibility = 'hidden';
+  const steps = [6, 10, 16, 26, 44, 80, 140], t0 = performance.now();
+  (function frame(now) {
+    const k = Math.floor((now - t0) / 85);
+    if (k >= steps.length) { cv.remove(); img.style.visibility = ''; return; }
+    const w = steps[k], h = Math.max(1, Math.round(w * img.naturalHeight / img.naturalWidth));
+    cv.width = w; cv.height = h; ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(img, 0, 0, w, h);
+    requestAnimationFrame(frame);
+  })(t0);
+}
+if (!still) {
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    io.unobserve(e.target);
+    const go = () => pixelReveal(e.target);
+    e.target.complete ? go() : e.target.addEventListener('load', go, { once: true });
+  }), { threshold: 0.5 });
+  document.querySelectorAll('.shots img').forEach(img => io.observe(img));
+}
+
+// Contact details start redacted and decrypt when they come into view.
+(function redact() {
+  const links = [...document.querySelectorAll('a.redact')];
+  if (still) return;
+  links.forEach(a => a.classList.add('hidden-text'));
+  const io = new IntersectionObserver(es => {
+    if (!es.some(e => e.isIntersecting)) return;
+    io.disconnect();
+    links.forEach((a, i) => setTimeout(() => { a.classList.remove('hidden-text'); decrypt(a); }, 400 + i * 350));
+  }, { threshold: 0.6 });
+  links.forEach(a => io.observe(a));
+})();
+
+// Up, up, down, down, left, right, left, right, B, A.
+(function konami() {
+  const code = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+  let at = 0, running = false;
+  const box = document.getElementById('breach'), log = document.getElementById('breachlog'), end = document.getElementById('breachend');
+  addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('input')) return;
+    at = e.key.toLowerCase() === code[at].toLowerCase() ? at + 1 : (e.key === code[0] ? 1 : 0);
+    if (at === code.length) { at = 0; if (!running) breach(); }
+  });
+  async function breach() {
+    running = true;
+    box.classList.add('on'); log.textContent = ''; end.textContent = '';
+    const lines = [`intruder: ${ip()}`, 'firewall .......... BYPASSED', 'encryption ........ BROKEN', 'copying portfolio . 100%', 'self-destruct in 3', 'self-destruct in 2', 'self-destruct in 1'];
+    for (const l of lines) { log.textContent += l + '\n'; await sleep(still ? 0 : 420); }
+    end.textContent = 'JUST KIDDING. YOU FOUND THE KONAMI CODE. NOW HIRE ME: SEE CONTACT.';
+    await sleep(2600);
+    box.classList.remove('on'); running = false;
+  }
+})();
+
+// The ticker sits right under the status bar, whatever height the bar wraps to.
+(function stick() {
+  const hud = document.querySelector('.hud'), tk = document.querySelector('.ticker');
+  const fit = () => { tk.style.top = hud.offsetHeight + 'px'; document.documentElement.style.scrollPaddingTop = (hud.offsetHeight + tk.offsetHeight + 12) + 'px'; };
+  new ResizeObserver(fit).observe(hud); fit();
+})();

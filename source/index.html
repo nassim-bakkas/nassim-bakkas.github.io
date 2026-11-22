@@ -23,6 +23,10 @@
   </div>
 </header>
 
+<div class="ticker" aria-hidden="true"><div class="ticker-in" id="ticker"></div></div>
+<div id="cursor" aria-hidden="true"><i></i><span id="coords">X:0000 Y:0000</span></div>
+<div id="glitch" aria-hidden="true"></div>
+<div id="breach" aria-hidden="true"><div class="breach-in"><p class="b1">!! SYSTEM BREACH DETECTED !!</p><pre id="breachlog"></pre><p class="b2" id="breachend"></p></div></div>
 <main>
 
 <section class="hero">
@@ -31,6 +35,11 @@
     <div class="avatar-box">
       <canvas id="avatar" aria-hidden="true"></canvas>
       <span class="tag">CLASS: SECURITY ENGINEER</span>
+      <div class="sysmon" aria-hidden="true">
+        <div class="mrow"><span>CPU</span><i class="meter"><b id="cpu"></b></i><em id="cpuv">--%</em></div>
+        <div class="mrow"><span>NET</span><canvas id="net"></canvas></div>
+        <div class="mrow"><span>BLOCKED</span><em id="blocked" class="big">0</em></div>
+      </div>
     </div>
     <div>
       <p class="label">PLAYER PROFILE</p>
@@ -176,9 +185,9 @@
       <div class="bar"><i></i><i></i><i></i><span>secure channel</span></div>
       <div class="lines">
         <div class="tl cmd">$ contact --list</div>
-        <div class="tl">email ...... <a href="mailto:nassimbakkas996@gmail.com">nassimbakkas996@gmail.com</a></div>
-        <div class="tl">linkedin ... <a href="https://linkedin.com/in/nassim-bakkas">linkedin.com/in/nassim-bakkas</a></div>
-        <div class="tl">github ..... <a href="https://github.com/nassim-bakkas">github.com/nassim-bakkas</a></div>
+        <div class="tl">email ...... <a class="redact" href="mailto:nassimbakkas996@gmail.com">nassimbakkas996@gmail.com</a></div>
+        <div class="tl">linkedin ... <a class="redact" href="https://linkedin.com/in/nassim-bakkas">linkedin.com/in/nassim-bakkas</a></div>
+        <div class="tl">github ..... <a class="redact" href="https://github.com/nassim-bakkas">github.com/nassim-bakkas</a></div>
         <div class="tl hot">Looking for a summer 2027 internship in software development or cybersecurity, anywhere in Morocco.<span class="cursor"></span></div>
       </div>
     </div>

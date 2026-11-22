@@ -174,3 +174,75 @@ footer a { color: var(--green); }
   html { scroll-behavior: auto; }
   .glitch::before, .glitch::after, .dot, .cursor, .coin, .state.wip, .mission:hover::before { animation: none; }
 }
+
+/* ── Cyber effects ─────────────────────────────────────────────────────── */
+/* CRT: a dark vignette and a faint flicker over everything */
+body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 49; background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55) 100%); animation: crt 6s steps(1) infinite; }
+@keyframes crt { 0%, 100% { opacity: 1; } 47% { opacity: 0.86; } 48% { opacity: 1; } 83% { opacity: 0.92; } 84% { opacity: 1; } }
+
+/* live security log under the status bar */
+.ticker { position: sticky; top: 0; z-index: 19; background: #05070d; border-bottom: 1px solid var(--line); overflow: hidden; height: 26px; }
+.ticker-in { display: flex; gap: 40px; white-space: nowrap; font-family: var(--term); font-size: 18px; line-height: 26px; color: var(--dim); width: max-content; animation: tick 60s linear infinite; padding-left: 20px; }
+.ticker-in b { font-weight: 400; color: var(--green); }
+.ticker-in i { font-style: normal; color: var(--magenta); }
+@keyframes tick { to { transform: translateX(-50%); } }
+
+/* system monitor under the avatar */
+.sysmon { width: 100%; display: grid; gap: 6px; border-top: 2px dashed var(--line); padding-top: 10px; font-family: var(--pixel); font-size: 7px; color: var(--dim); }
+.mrow { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+.mrow canvas { grid-column: 2 / 4; width: 100%; height: 26px; display: block; }
+.meter { display: block; height: 8px; background: #05070d; border: 1px solid var(--line); }
+.meter b { display: block; height: 100%; width: 30%; background: var(--green); transition: width .4s steps(6); }
+.mrow em { font-style: normal; color: var(--green); min-width: 4ch; text-align: right; }
+.mrow em.big { color: var(--magenta); font-size: 9px; grid-column: 2 / 4; text-align: left; }
+
+/* targeting cursor (mouse only) */
+#cursor { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  body.aim, body.aim a, body.aim button, body.aim .mission { cursor: none; }
+  body.aim #cursor { display: block; position: fixed; left: 0; top: 0; z-index: 60; pointer-events: none; }
+  #cursor i { position: absolute; left: -15px; top: -15px; width: 30px; height: 30px; border: 2px solid var(--green); transition: transform .12s, border-color .12s; }
+  #cursor i::before, #cursor i::after { content: ""; position: absolute; background: var(--green); }
+  #cursor i::before { left: 13px; top: -8px; width: 2px; height: 42px; clip-path: polygon(0 0, 100% 0, 100% 30%, 0 30%, 0 70%, 100% 70%, 100% 100%, 0 100%); }
+  #cursor i::after { top: 13px; left: -8px; height: 2px; width: 42px; clip-path: polygon(0 0, 30% 0, 30% 100%, 0 100%, 70% 0, 100% 0, 100% 100%, 70% 100%); }
+  #cursor span { position: absolute; left: 22px; top: 16px; font-family: var(--term); font-size: 15px; color: var(--green); white-space: nowrap; text-shadow: 0 0 4px #000; }
+  body.aim.locked #cursor i { transform: rotate(45deg) scale(0.75); border-color: var(--magenta); }
+  body.aim.locked #cursor span { color: var(--magenta); }
+}
+
+/* lock-on brackets on missions */
+.mission::after { content: ""; position: absolute; inset: 8px; pointer-events: none; opacity: 0; transition: inset .18s, opacity .18s;
+  background:
+    linear-gradient(var(--c), var(--c)) top left / 18px 3px no-repeat, linear-gradient(var(--c), var(--c)) top left / 3px 18px no-repeat,
+    linear-gradient(var(--c), var(--c)) top right / 18px 3px no-repeat, linear-gradient(var(--c), var(--c)) top right / 3px 18px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom left / 18px 3px no-repeat, linear-gradient(var(--c), var(--c)) bottom left / 3px 18px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom right / 18px 3px no-repeat, linear-gradient(var(--c), var(--c)) bottom right / 3px 18px no-repeat; }
+.mission:hover::after { inset: 3px; opacity: 1; }
+
+/* glitch transition */
+#glitch { position: fixed; inset: 0; z-index: 70; pointer-events: none; display: none; }
+#glitch.on { display: block; }
+#glitch i { position: absolute; left: 0; right: 0; mix-blend-mode: screen; }
+
+/* screenshots decrypting */
+.shots { position: relative; }
+.shots canvas.pix { position: absolute; pointer-events: none; image-rendering: pixelated; }
+
+/* redacted contact */
+.redact.hidden-text { color: transparent; background: var(--ink); text-decoration: none; }
+
+/* breach easter egg */
+#breach { display: none; }
+#breach.on { display: grid; place-items: center; position: fixed; inset: 0; z-index: 90; background: rgba(40, 0, 10, 0.92); animation: alarm .5s steps(1) infinite; padding: 20px; }
+@keyframes alarm { 50% { background: rgba(10, 0, 4, 0.95); } }
+.breach-in { max-width: 680px; width: 100%; }
+.b1 { font-family: var(--pixel); color: #FF3D5E; font-size: clamp(12px, 3vw, 22px); line-height: 1.6; margin: 0 0 18px; }
+#breachlog { font-family: var(--term); font-size: 20px; color: #FFB3C0; white-space: pre-wrap; margin: 0 0 18px; min-height: 8em; }
+.b2 { font-family: var(--pixel); color: var(--green); font-size: 11px; line-height: 1.8; margin: 0; }
+
+@media (max-width: 800px) {
+  .sysmon { max-width: 220px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body::before, .ticker-in, #breach.on { animation: none; }
+}
