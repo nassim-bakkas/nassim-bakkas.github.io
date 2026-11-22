@@ -103,7 +103,7 @@ async function boot() {
   if (!skipped) { box.classList.add('done'); await sleep(850); }
   document.body.classList.remove('booting');
 }
-boot().then(() => { if (!still) typeLines(document.getElementById('term')); });
+boot().then(async () => { if (!still) await typeLines(document.getElementById('term')); shell(document.getElementById('term')); });
 document.getElementById('again').addEventListener('click', e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: still ? 'auto' : 'smooth' }); });
 
 // ── Bonus stage: fly the ship, shoot a shape, land on that mission ───────────
@@ -182,3 +182,110 @@ document.getElementById('again').addEventListener('click', e => { e.preventDefau
     requestAnimationFrame(frame);
   }
 })(document.getElementById('play'));
+
+// ── The terminal: after the intro, visitors can type commands ───────────────
+function shell(term) {
+  const form = document.getElementById('prompt'), input = document.getElementById('cmd'), out = term.querySelector('.lines');
+  const chips = document.getElementById('chips');
+  form.hidden = false; chips.hidden = false;
+  const blink = term.querySelector('.cursor'); if (blink) blink.remove();   // the input's own caret takes over
+  out.setAttribute('aria-live', 'polite');
+  const esc = t => t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const link = (href, text) => `<a href="${href}">${esc(text || href)}</a>`;
+  function print(html, cls) { const d = document.createElement('div'); d.className = 'tl' + (cls ? ' ' + cls : ''); d.innerHTML = html; out.appendChild(d); out.scrollTop = out.scrollHeight; return d; }
+  const jump = id => { const el = document.getElementById(id) || document.querySelector(id); if (el) el.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' }); };
+  const MISSIONS = {
+    hvac: ['HVAC energy study', 'LSTM temperature forecast, re-tested on 6,792 h of data; my own 7% claim retracted.', 'https://github.com/nassim-bakkas/hvac-lstm-pid', 0],
+    vmswarm: ['VMSwarm', 'Bash + C fleet manager for KVM VMs; security review of my own code, 61 tests.', null, 1],
+    modbus: ['Modbus HVAC Monitor', 'Process-aware intrusion detection for building control networks. In progress.', null, 2],
+    spacegame: ['Space Game', 'Rhythm shooter in Java: 33 waves, 13 boss fights, music synthesised in code.', 'https://github.com/nassim-bakkas/space-game', 3]
+  };
+  const missionCards = () => document.querySelectorAll('#missions .grid:first-of-type .mission');
+  const COMMANDS = {
+    help: () => {
+      print('available commands:');
+      [['whoami', 'who I am'], ['projects', 'list my missions'], ['open &lt;name&gt;', 'jump to a mission, e.g. open hvac'], ['skills', 'my inventory'],
+       ['experience', 'my internship'], ['contact', 'how to reach me'], ['github', 'my GitHub'], ['play', 'the bonus stage'], ['hack', 'try it'], ['clear', 'clear the screen']]
+        .forEach(([c, d]) => print(`  <span class="k">${c.padEnd(14, ' ').replace(/ /g, '&nbsp;')}</span>${d}`));
+      print('tip: Tab completes, ↑ recalls the last command.');
+    },
+    whoami: () => ['Nassim Bakkas', 'Computer engineering student, year 2 of 3, ENSET Mohammedia', 'Specialising in cybersecurity and digital trust', 'Looking for a summer 2027 internship, software or security'].forEach(l => print(l)),
+    projects: () => { Object.entries(MISSIONS).forEach(([k, m]) => print(`<span class="k">${k}</span> ... ${esc(m[1])}`)); print('type <span class="k">open &lt;name&gt;</span> to jump to one.'); },
+    ls: () => print(Object.keys(MISSIONS).map(k => `<span class="k">${k}/</span>`).join('&nbsp;&nbsp;') + '&nbsp;&nbsp;motto.txt&nbsp;&nbsp;contact.txt'),
+    open: arg => {
+      const key = Object.keys(MISSIONS).find(k => arg && k.startsWith(arg.toLowerCase().replace(/[\s/-]/g, '')));
+      if (!key) return print(`open: no mission named "${esc(arg || '')}". try: ${Object.keys(MISSIONS).join(', ')}`, 'err');
+      const m = MISSIONS[key];
+      print(`opening <span class="k">${m[0]}</span>...`, 'ok');
+      if (m[2]) print('repo: ' + link(m[2]));
+      const card = missionCards()[m[3]];
+      if (card) setTimeout(() => card.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'center' }), 350);
+    },
+    cat: arg => {
+      if (arg === 'motto.txt') return print('I go back and test my own work.', 'hot');
+      if (arg === 'contact.txt') return COMMANDS.contact();
+      print(`cat: ${esc(arg || '')}: no such file. try motto.txt or contact.txt`, 'err');
+    },
+    skills: () => {
+      [['languages', 'Python, C, Java, PHP, Bash, SQL'], ['security', 'injection review, Burp Suite, Modbus, hardening'], ['systems', 'Linux, WSL2, SSH, cron, systemd, KVM'],
+       ['data + ml', 'pandas, scikit-learn, TensorFlow'], ['web', 'JavaScript, Laravel, Tailwind, Streamlit']].forEach(([k, v]) => print(`<span class="k">${k.padEnd(10, ' ').replace(/ /g, '&nbsp;')}</span>${v}`));
+    },
+    experience: () => { print('Intern, court registry · Administrative Court, Agadir · summer 2026'); print('Playwright automation, a SHA-256 document checker, Linux admin, antivirus on 31 PCs.'); setTimeout(() => jump('quests'), 350); },
+    contact: () => {
+      print('email ..... ' + link('mailto:nassimbakkas996@gmail.com', 'nassimbakkas996@gmail.com'));
+      print('linkedin .. ' + link('https://linkedin.com/in/nassim-bakkas', 'linkedin.com/in/nassim-bakkas'));
+      print('github .... ' + link('https://github.com/nassim-bakkas', 'github.com/nassim-bakkas'));
+    },
+    github: () => print('github .... ' + link('https://github.com/nassim-bakkas', 'github.com/nassim-bakkas')),
+    linkedin: () => print('linkedin .. ' + link('https://linkedin.com/in/nassim-bakkas', 'linkedin.com/in/nassim-bakkas')),
+    play: () => { print('loading bonus stage...', 'ok'); setTimeout(() => { jump('bonus'); document.getElementById('play').focus({ preventScroll: true }); }, 350); },
+    clear: () => { out.innerHTML = ''; },
+    date: () => print(new Date().toString()),
+    echo: arg => print(esc(arg || '')),
+    pwd: () => print('/home/visitor'),
+    sudo: () => print('visitor is not in the sudoers file. This incident will be reported.', 'err'),
+    rm: () => print('nice try. this portfolio has backups.', 'err'),
+    exit: () => print('there is no exit. try <span class="k">contact</span> instead.'),
+    hack: () => hack()
+  };
+  COMMANDS.cd = COMMANDS.open;
+  COMMANDS.about = COMMANDS.whoami;
+  let busy = false;
+  async function hack() {
+    busy = true;
+    const target = 'nassim-bakkas.github.io';
+    print(`> target: ${target}`, 'ok');
+    for (const step of ['scanning ports', 'bypassing firewall', 'decrypting résumé', 'escalating privileges']) {
+      const line = print(`${step} [          ] 0%`);
+      for (let i = 1; i <= 10; i++) { await sleep(still ? 0 : 55 + Math.random() * 60); line.textContent = `${step} [${'#'.repeat(i)}${' '.repeat(10 - i)}] ${i * 10}%`; }
+    }
+    print('ACCESS GRANTED. reward unlocked: a good intern for summer 2027.', 'ok');
+    print('claim it with <span class="k">contact</span>.');
+    busy = false;
+  }
+  const history = []; let hi = 0;
+  function run(raw) {
+    const line = raw.trim();
+    print('$ ' + esc(line), 'cmd');
+    if (!line) return;
+    history.push(line); hi = history.length;
+    const [name, ...rest] = line.split(/\s+/), arg = rest.join(' ');
+    const fn = COMMANDS[name.toLowerCase()];
+    if (fn) fn(arg); else print(`command not found: ${esc(name)}. type <span class="k">help</span>`, 'err');
+  }
+  form.addEventListener('submit', e => { e.preventDefault(); if (busy) return; run(input.value); input.value = ''; });
+  input.addEventListener('keydown', e => {
+    if (e.key === 'ArrowUp' && history.length) { e.preventDefault(); hi = Math.max(0, hi - 1); input.value = history[hi]; }
+    else if (e.key === 'ArrowDown' && history.length) { e.preventDefault(); hi = Math.min(history.length, hi + 1); input.value = history[hi] || ''; }
+    else if (e.key === 'Tab' && input.value) {
+      const [head, ...rest] = input.value.split(' ');
+      const pool = rest.length ? Object.keys(MISSIONS) : Object.keys(COMMANDS), part = rest.length ? rest.join(' ') : head;
+      const hit = pool.filter(k => k.startsWith(part.toLowerCase()));
+      if (hit.length === 1) { e.preventDefault(); input.value = rest.length ? head + ' ' + hit[0] : hit[0] + ' '; }
+      else if (hit.length > 1) { e.preventDefault(); print(hit.join('&nbsp;&nbsp;')); }
+    }
+  });
+  term.addEventListener('click', e => { if (!e.target.closest('a') && !getSelection().toString()) input.focus({ preventScroll: true }); });
+  chips.addEventListener('click', e => { const b = e.target.closest('button[data-cmd]'); if (b && !busy) run(b.dataset.cmd); });
+  print('type <span class="k">help</span> to see what this terminal can do.');
+}

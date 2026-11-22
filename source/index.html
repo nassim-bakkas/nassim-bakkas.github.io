@@ -46,6 +46,17 @@
           <div class="tl cmd">$ cat motto.txt</div>
           <div class="tl hot">I go back and test my own work.<span class="cursor"></span></div>
         </div>
+        <form class="prompt" id="prompt" autocomplete="off" hidden>
+          <label for="cmd">visitor@nassim-bakkas:~$</label>
+          <input id="cmd" type="text" spellcheck="false" autocapitalize="off" enterkeyhint="go" placeholder="type help">
+        </form>
+      </div>
+      <div class="chips" id="chips" hidden aria-label="Quick commands">
+        <button type="button" data-cmd="help">help</button>
+        <button type="button" data-cmd="projects">projects</button>
+        <button type="button" data-cmd="skills">skills</button>
+        <button type="button" data-cmd="contact">contact</button>
+        <button type="button" data-cmd="hack">hack</button>
       </div>
       <div class="cta"><a class="btn go" href="#missions">▶ START MISSIONS</a><a class="btn" href="https://github.com/nassim-bakkas">GITHUB</a><a class="btn" href="#contact">CONTACT</a></div>
     </div>
